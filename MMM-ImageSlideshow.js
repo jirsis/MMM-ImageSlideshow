@@ -34,7 +34,7 @@ Module.register("MMM-ImageSlideshow", {
         validImageFileExtensions: 'bmp,jpg,gif,png',
 
         includeRecursive: false,
-        patterToInclude: '.*',
+        patternToInclude: '.*',
         cacheFoundImages: true,
         cacheFilename: 'mmm-FileSystemImageSlideshow.cache',
 	},

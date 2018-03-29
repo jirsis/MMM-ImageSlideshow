@@ -149,7 +149,7 @@ module.exports = NodeHelper.create({
         files.forEach(function(file) {
             if (FileSystemImageSlideshow.statSync(PathImageSlideshow.join(dir, file)).isDirectory()) {
                 filelist = self.walkSync(PathImageSlideshow.join(dir, file), filelist, config);
-            } else if(self.isFiltered(file, config.patterToInclude)){
+            } else if(self.isFiltered(file, config.patternToInclude)){
                 filelist.push({
                     path: dir,
                     filename: file
