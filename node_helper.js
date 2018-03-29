@@ -16,6 +16,7 @@
 var NodeHelper = require("node_helper");
 var FileSystemImageSlideshow = require("fs");
 var PathImageSlideshow = require('path');
+var OS = require('os');
 
 
 module.exports = NodeHelper.create({
@@ -56,6 +57,45 @@ module.exports = NodeHelper.create({
     gatherImageList: function(config) {
         var self = this;
         var imageList = [];
+
+        imageList = this.searchImages(config);
+        imageList = this.tryToJoinAllPaths(config, imageList);
+       
+        var imageListComplete = [];
+        for (var index = 0; index < imageList.length; index++) {
+            imageListComplete.push(imageList[index].path + '/' + imageList[index].filename);
+        }
+        
+        if(config.cacheFoundImages){
+            this.persistCache(imageListComplete, config.cacheFilename);
+        }
+
+        return imageListComplete;
+    },
+
+    persistCache: function(images, cacheFilename){
+        var pathCache = PathImageSlideshow.join(OS.tmpdir(), cacheFilename);
+        if(!FileSystemImageSlideshow.existsSync(pathCache)){
+            FileSystemImageSlideshow.writeFileSync(pathCache, JSON.stringify(images));
+            console.log('[MMM-ImageSlideshow] images cache created: '+pathCache);
+        }else{
+            console.log('[MMM-ImageSlideshow] images cache founded: '+pathCache);
+        }
+    },
+
+    tryToJoinAllPaths: function(config, imageList){
+        if (config.treatAllPathsAsOne) {
+            if (config.randomizeImageOrder){
+                imageList = this.shuffleArray(imageList);
+            } else {
+                imageList = imageList.sort(this.sortByFilename);
+            }
+        }
+        return imageList;
+    },
+
+    searchImages: function(config){
+        var imageList = [];
         for (var pathIndex = 0; pathIndex < config.imagePaths.length; pathIndex++) {
             var currentPath = config.imagePaths[pathIndex];
             var currentPathImageList = FileSystemImageSlideshow.readdirSync(path = currentPath);
@@ -67,7 +107,7 @@ module.exports = NodeHelper.create({
                 }else{
                     currentImageList=this.gatherInPlainPath(config, currentPathImageList, currentPath);
                 }
-                
+
                 if (!config.treatAllPathsAsOne) {
                     if (config.randomizeImageOrder){
                         currentImageList = this.shuffleArray(currentImageList);
@@ -79,20 +119,7 @@ module.exports = NodeHelper.create({
                 imageList = imageList.concat(currentImageList);
             }
         }
-        
-        if (config.treatAllPathsAsOne) {
-            if (config.randomizeImageOrder)
-                imageList = this.shuffleArray(imageList);
-            else
-                imageList = imageList.sort(this.sortByFilename);
-        }
-       
-        var imageListComplete = [];
-        for (var index = 0; index < imageList.length; index++) {
-            imageListComplete.push(imageList[index].path + '/' + imageList[index].filename);
-        }
-        
-        return imageListComplete;
+        return imageList;
     },
 
     gatherInRecursivePath: function(config, currentPath){
@@ -160,6 +187,8 @@ module.exports = NodeHelper.create({
             self.sendSocketNotification('IMAGESLIDESHOW_FILELIST', returnPayload );
         }
     },     
+
+
 });
 
 //------------ end -------------
