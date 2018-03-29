@@ -1,5 +1,11 @@
-# Module: Image Slideshow
+# Module: Image Slideshow extended
 The `MMM-ImageSlideshow` module is designed to display images, one at a time on a fixed interval, from one or many directories. These images can be shown in order or at random, one directory at a time or all at time. The image heights and widths can be fixed, and the images can be made to be shown in grayscale.
+
+This extension define new properties to scan recursivement a custom path to find images match with a pattern defined by configuration.
+Another new feature is be able to persist the previous scan result in a temp cache file. In this case, 
+if you restart MagicMirror, the module load the info with this cache file and don't repeat the full scan.
+
+Note: to force rescan you must delete this file and restar MagicMirror.
 
 ## Dependencies / Requirements
 
@@ -100,6 +106,30 @@ The following properties can be configured:
 			<td>String value, a list of image file extensions, seperated by commas, that should be included. Files found without one of the extensions will be ignored.<br>
 				<br><b>Example:</b> <code>'png,jpg'</code>
 				<br><b>Default value:</b> <code>'bmp,jpg,gif,png'</code>
+				<br>This value is <b>OPTIONAL</b>
+			</td>
+		</tr>         
+		<tr>
+			<td><code>includeRecursive</code></td>
+			<td>Boolean value, if true scan all subdirectories into the base path.<br>
+				<br><b>Example:</b> <code>'true'</code>
+				<br><b>Default value:</b> <code>'false'</code>
+				<br>This value is <b>OPTIONAL</b>
+			</td>
+		</tr>         
+		<tr>
+			<td><code>patternToInclude</code></td>
+			<td>String value, a regex to define which images must be included in the list to show.<br>
+				<br><b>Example:</b> <code>'^sample-'</code>
+				<br><b>Default value:</b> <code>'.*'</code>
+				<br>This value is <b>OPTIONAL</b>
+			</td>
+		</tr>         
+		<tr>
+			<td><code>cacheFoundImages</code></td>
+			<td>Boolean value, if true the scan persists in a temporal file to avoid full rescan.<br>
+				<br><b>Example:</b> <code>'true'</code>
+				<br><b>Default value:</b> <code>'false'</code>
 				<br>This value is <b>OPTIONAL</b>
 			</td>
 		</tr>         
