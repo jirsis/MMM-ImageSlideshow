@@ -194,7 +194,6 @@ module.exports = NodeHelper.create({
             var self = this;
             // get the image list
             var imageList = this.gatherImageList(payload);
-            console.log(imageList);
             // build the return payload
             var returnPayload = { identifier: payload.identifier, imageList: imageList };
             // send the image list back
