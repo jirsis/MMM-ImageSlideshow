@@ -35,6 +35,8 @@ Module.register("MMM-ImageSlideshow", {
 
         includeRecursive: false,
         patterToInclude: '.*',
+        cacheFoundImages: true,
+        cacheFilename: 'mmm-FileSystemImageSlideshow.cache',
 	},
     // load function
 	start: function () {
