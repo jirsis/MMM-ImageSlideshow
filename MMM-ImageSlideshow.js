@@ -32,6 +32,9 @@ Module.register("MMM-ImageSlideshow", {
         makeImagesGrayscale: false,
         // list of valid file extensions, seperated by commas
         validImageFileExtensions: 'bmp,jpg,gif,png',
+
+        includeRecursive: false,
+        patterToInclude: '.*',
 	},
     // load function
 	start: function () {
