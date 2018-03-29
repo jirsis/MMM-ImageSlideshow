@@ -57,20 +57,34 @@ module.exports = NodeHelper.create({
     gatherImageList: function(config) {
         var self = this;
         var imageList = [];
-
-        imageList = this.searchImages(config);
-        imageList = this.tryToJoinAllPaths(config, imageList);
-       
         var imageListComplete = [];
-        for (var index = 0; index < imageList.length; index++) {
-            imageListComplete.push(imageList[index].path + '/' + imageList[index].filename);
-        }
-        
-        if(config.cacheFoundImages){
-            this.persistCache(imageListComplete, config.cacheFilename);
-        }
 
+        if(config.cacheFoundImages) {
+            imageListComplete = this.loadFromCache(config.cacheFilename);
+        } 
+        
+        if(imageListComplete.length == 0) {
+            imageList = this.searchImages(config);
+            imageList = this.tryToJoinAllPaths(config, imageList);
+        
+            for (var index = 0; index < imageList.length; index++) {
+                imageListComplete.push(imageList[index].path + '/' + imageList[index].filename);
+            }
+            if(config.cacheFoundImages){
+                this.persistCache(imageListComplete, config.cacheFilename);
+            }
+        }
         return imageListComplete;
+    },
+
+    loadFromCache: function(cacheFilename){
+        var images = [];
+        var pathCache = PathImageSlideshow.join(OS.tmpdir(), cacheFilename);
+        if(FileSystemImageSlideshow.existsSync(pathCache)){
+            images = JSON.parse(FileSystemImageSlideshow.readFileSync(pathCache, 'utf8'));
+            console.log('[MMM-ImageSlideshow] images loaded from cache: '+pathCache);
+        }
+        return images;
     },
 
     persistCache: function(images, cacheFilename){
@@ -168,7 +182,6 @@ module.exports = NodeHelper.create({
                 currentImageList.push(currentImage);
             }
         }
-        // console.log(currentImageList);
         return currentImageList;
     },
 
@@ -181,6 +194,7 @@ module.exports = NodeHelper.create({
             var self = this;
             // get the image list
             var imageList = this.gatherImageList(payload);
+            console.log(imageList);
             // build the return payload
             var returnPayload = { identifier: payload.identifier, imageList: imageList };
             // send the image list back
